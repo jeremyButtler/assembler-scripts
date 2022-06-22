@@ -1,8 +1,8 @@
-# Assembler-scripts
+# Assembler-scripts #
 
 Scripts I used to run assemblers for the 2021 benchmarking study
 
-# How to use
+## How to use ##
 
 1. Modify runAllSubsamples.sh:
     - Variables at top hold the location of the files
@@ -10,7 +10,7 @@ Scripts I used to run assemblers for the 2021 benchmarking study
     - -p parameter is the prefix to use for file name
 2. bash runAllSubsamples.sh
 
-# Adding an assembler
+## Adding an assembler ##
 
 1. Modify runAssemblers.sh to recognize the runAssemblerName.sh script
     - Line 84 add your assembler to the list of recongnized assemblers (valdAsmbStr variable)
@@ -20,7 +20,7 @@ Scripts I used to run assemblers for the 2021 benchmarking study
     - Assembler call: Section 4
     - Get user arguments: Section 2
 
-# Other usefull scripts (in extra-scripts)
+## Other usefull scripts (in extra-scripts) ##
 
 1. metaQuastAddBlank.sh adds a blank entry for replicates that were detected less than 12 times
     - Use: metaQuastAddBlank.sh prefix--metaStats-combined.csv
