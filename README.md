@@ -39,7 +39,11 @@ For MetaQuast, if you are working with both plasmids and chromosomes, you will h
 
 The R scripts are designed for the species used in our benchmarking study.
 
-1. Chromosome pomoxis data: Rscript r-scripts/pomoxisGraph.r r-data/Voltrax-Chrom--pomoxis-Q.csv chromosome
-2. Plasmid pomoxis data: Rscript r-scripts/pomoxisGraph.r r-data/Voltrax-Plas--pomoxis-Q.csv plasmid
-3. Metaquast: Rscript r-scripts/metaQuastIsolet.r r-data/voltrax--metaStats-isolet-plasBal-geneId.csv
-4. time and memory graphs: Rscript r-scripts/timeGraphs.r r-data/voltrax-all--time-log.csv
+1. Chromosome pomoxis data:
+    - Rscript r-scripts/pomoxisGraph.r r-data/Voltrax-Chrom--pomoxis-Q.csv chromosome
+3. Plasmid pomoxis data:
+    - Rscript r-scripts/pomoxisGraph.r r-data/Voltrax-Plas--pomoxis-Q.csv plasmid
+5. Metaquas data:
+    - Rscript r-scripts/metaQuastIsolet.r r-data/voltrax--metaStats-isolet-plasBal-geneId.csv
+7. time and memory data:
+    = Rscript r-scripts/timeGraphs.r r-data/voltrax-all--time-log.csv
