@@ -46,4 +46,4 @@ The R scripts are designed for the species used in our benchmarking study.
 5. Metaquas data:
     - Rscript r-scripts/metaQuastIsolet.r r-data/voltrax--metaStats-isolet-plasBal-geneId.csv
 7. time and memory data:
-    = Rscript r-scripts/timeGraphs.r r-data/voltrax-all--time-log.csv
+    - Rscript r-scripts/timeGraphs.r r-data/voltrax-all--time-log.csv
