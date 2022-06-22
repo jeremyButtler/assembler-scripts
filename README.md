@@ -2,7 +2,9 @@
 
 Scripts I used to run assemblers for the 2021 benchmarking study
 
-## How to use ##
+## Runing assemblers ##
+
+### How to use ###
 
 1. Modify runAllSubsamples.sh:
     - Variables at top hold the location of the files
@@ -10,7 +12,7 @@ Scripts I used to run assemblers for the 2021 benchmarking study
     - -p parameter is the prefix to use for file name
 2. bash runAllSubsamples.sh
 
-## Adding an assembler ##
+### Adding an assembler ###
 
 1. Modify runAssemblers.sh to recognize the runAssemblerName.sh script
     - Line 84 add your assembler to the list of recongnized assemblers (valdAsmbStr variable)
@@ -20,10 +22,20 @@ Scripts I used to run assemblers for the 2021 benchmarking study
     - Assembler call: Section 4
     - Get user arguments: Section 2
 
-## Other usefull scripts (in extra-scripts) ##
+### Other usefull scripts (in extra-scripts) ###
 
 1. metaQuastAddBlank.sh adds a blank entry for replicates that were detected less than 12 times
     - Use: metaQuastAddBlank.sh prefix--metaStats-combined.csv
     - Can be changed from 12 to any other number by changing numIdInt=12 paramter on line 
     - Is needed to avoid ggplot error of unequal numbers of replicates for each sequence
     - Will not detect refences that were completey missed
+
+## Building graphs ##
+
+1. Chromosome pomoxis data: Rscript pomoxisGraph.r ../r-data/Voltrax-Chrom--pomoxis-Q.csv chromosome
+2. Plasmid pomoxis data: Rscript pomoxisGraph.r ../r-data/Voltrax-Plas--pomoxis-Q.csv plasmid
+3. Metaquast: Rscript metaQuastIsolet.r ../r-data/voltrax--metaStats-isolet-plasBal-geneId.csv
+4. time and memory graphs: Rscript timeGraphs.r ../r-data/voltrax-all--time-log.csv
+
+
+
