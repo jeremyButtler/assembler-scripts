@@ -30,12 +30,16 @@ Scripts I used to run assemblers for the 2021 benchmarking study
     - Is needed to avoid ggplot error of unequal numbers of replicates for each sequence
     - Will not detect refences that were completey missed
 
+### Non-scripted steps: ###
+
+For MetaQuast, if you are working with both plasmids and chromosomes, you will have to manually mark
+  plasmids and chromosomes in the MetaQuast csv file.
+
 ## Building graphs ##
 
-1. Chromosome pomoxis data: Rscript pomoxisGraph.r ../r-data/Voltrax-Chrom--pomoxis-Q.csv chromosome
-2. Plasmid pomoxis data: Rscript pomoxisGraph.r ../r-data/Voltrax-Plas--pomoxis-Q.csv plasmid
-3. Metaquast: Rscript metaQuastIsolet.r ../r-data/voltrax--metaStats-isolet-plasBal-geneId.csv
-4. time and memory graphs: Rscript timeGraphs.r ../r-data/voltrax-all--time-log.csv
+The R scripts are designed for the species used in our benchmarking study.
 
-
-
+1. Chromosome pomoxis data: Rscript r-scripts/pomoxisGraph.r r-data/Voltrax-Chrom--pomoxis-Q.csv chromosome
+2. Plasmid pomoxis data: Rscript r-scripts/pomoxisGraph.r r-data/Voltrax-Plas--pomoxis-Q.csv plasmid
+3. Metaquast: Rscript r-scripts/metaQuastIsolet.r r-data/voltrax--metaStats-isolet-plasBal-geneId.csv
+4. time and memory graphs: Rscript r-scripts/timeGraphs.r r-data/voltrax-all--time-log.csv
