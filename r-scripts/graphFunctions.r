@@ -96,7 +96,7 @@ getDataSum = function(data, sumColStr, catAryStr)
 getDataMed = function(data, medColStr, catAryStr)
 { # getDataMed function
     tmpData = setDT(data);
-    return(tmpData[, data.frame(medCol = median(get(medColStr))), 
+    return(tmpData[, data.frame(medCol = median(get(medColStr), rm.na = TRUE)), 
                      by = catAryStr]);
 } # getDataMed function
 

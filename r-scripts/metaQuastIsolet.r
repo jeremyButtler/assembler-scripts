@@ -463,6 +463,48 @@ graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # itali
 graph = graph + theme(legend.position = "none"); # remove the legened (not needed)
 saveGraph("Plasmid--20x--genome-fraction");
 
+#*******************************************************************************
+# Plasmid graph for 20x misassemblies
+#*******************************************************************************
+
+print("Making graph for misassemblies at 20x read depth");
+graph = ggplot(subData[subData$Coverage == 200 &
+                       !is.na(subData$Assembler),
+                      ],
+               aes(y = X..misassemblies,
+                   x = Source,
+                   fill = Source,
+                   shape = Source,
+)); # graph the data
+graph = graph +
+        facet_grid(cols = vars(!!as.symbol("Assembler"))) +
+        ylab("Misassemblies") +
+        xlab("Community member") +
+        geom_point(alpha = 0.5,
+                   cex = 4,
+                   position = position_jitter(width = 0.3,
+                                              height = 0,
+                                             ) # jitter
+        ) + # geom_piont
+        coord_cartesian(ylim = c (0, NA)) + # set ylim from 0 to max ylim
+        scale_shape_manual(values = c(24, 21, 23, 25, 22, 21)) +
+        scale_fill_brewer(type = "qual", palette = "Set2");
+
+graph = plotMedian(graph,
+                   data = subData[subData$Coverage == 200 &
+                                  !is.na(subData$Assembler),],
+                   yColStr = "X..misassemblies",
+                   catAryStr = c("Assembler", "Source"),
+                   widthDbl = 1
+); # add median to graph, 1=crossbar width
+
+
+graph = applyTheme(graph); # apply my theme
+graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
+graph = graph + theme(legend.position = "none"); # remove the legened (not needed)
+saveGraph("Plasmid--200x--misAssemblies");
+
+
 
 
 ##*******************************************************************************
