@@ -35,7 +35,9 @@ Scripts I used to run assemblers for the 2021 benchmarking study
 For MetaQuast, if you are working with both plasmids and chromosomes, you will have to manually mark
   plasmids and chromosomes in the MetaQuast csv file.
 
-## Building graphs ##
+## R scripts ##
+
+### Building graphs ###
 
 The R scripts are designed for the species used in our benchmarking study.
 
@@ -47,3 +49,7 @@ The R scripts are designed for the species used in our benchmarking study.
     - Rscript r-scripts/metaQuastIsolet.r r-data/voltrax--metaStats-isolet-plasBal-geneId.csv
 7. time and memory data:
     - Rscript r-scripts/timeGraphs.r r-data/voltrax-all--time-log.csv
+
+### Statistics for subsamples ###
+
+Rscript r-scripts/subsampleStats.r
