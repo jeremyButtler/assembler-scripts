@@ -10,7 +10,7 @@ Scripts I used to run assemblers for the 2021 benchmarking study
     - Variables at top hold the location of the files
     - -d parameter is the read depths testing
     - -p parameter is the prefix to use for file name
-2. bash runAllSubsamples.sh
+2. bash source/runAllSubsamples.sh
 
 ### Adding an assembler ###
 
