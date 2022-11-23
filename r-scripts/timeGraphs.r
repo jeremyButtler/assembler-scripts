@@ -19,7 +19,7 @@ subData = NA; # for subsampling qData
 #
 #qData = read.csv(args[6], header = TRUE);
 
-qData = read.csv("voltrax-all--time-log.csv", header = TRUE);
+qData = read.csv("../r-data/voltrax-all--time-log.csv", header = TRUE);
 
 # replace NA's for polishers with none (so ggplot graphs)
 qData$Polisher = replace_na(qData$Polisher, "none");
