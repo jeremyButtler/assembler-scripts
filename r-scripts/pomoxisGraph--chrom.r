@@ -67,8 +67,7 @@ qConvFun = (function(x) if(x < Inf){(1 - (1 / 10^(x/10))) * 100} else{x = 100});
 #
 #if(length(args) > 6) 
 #{prefixStr = args[7];} # get the prefix for the output graph names
-qData = read.csv("Voltrax-Chrom--pomoxis-Q.csv", header = TRUE);
-#qData = read.csv("Voltrax-Plas--pomoxis-Q.csv", header = TRUE);
+qData = read.csv("../r-data/Voltrax-Chrom--pomoxis-Q.csv", header = TRUE);
 
 # get the columns to graph (Median)
 graphColAryStr = names(qData)[sapply(names(qData), 
