@@ -1,6 +1,6 @@
 library("ggplot2"); # graphing
 library("data.table"); # for applying functions to data frames by groups
-library("ggstatsplot") # for adding in medians
+library("ggstatsplot") # for adding in medians (no longer used)
 library("ggpubr") # theme_pubr() for ggplots
 #library("viridis") # color blind pallets
 library("RColorBrewer") # for quantative color scheme
@@ -33,19 +33,22 @@ library("tidyr") # for replace_na
 # Output: ggplot graph object with the applied theme
 # Requires: ggpubr, ggplot2
 ################################################################################
-applyTheme = function(graph)
+applyTheme = function(graph, fontSizeInt = 10)
 { # applyTheme function
     graph = graph + 
         theme_pubr() + # nice clean theme to apply to my graph
         theme(panel.grid.major = element_blank(), # remove graph grid
               panel.grid.minor = element_blank(), # remove graph grid
               strip.background = element_blank(), # rm label shape in the faucet graph
-              strip.text = element_text(size = 18, face = "bold"), # increase facet text size
 #              strip.text = element_blank(, face = "bold"), # remove faucet labels likely faucet graph
 #              strip.text = element_text(angle = 50, vjust = 0.4, face = "bold"),
               axis.text.x = element_text(angle = 90, vjust=0.7, face = "bold"),
-              axis.title.y = element_text(size = 18, face = "bold"),
-              axis.title.x = element_text(size = 18, face = "bold"),
+              axis.text = element_text(size = fontSizeInt, face = "bold"), # axis tick labels
+              axis.title.y = element_text(size = fontSizeInt, face = "bold"),
+              axis.title.x = element_text(size = fontSizeInt, face = "bold"),
+              legend.title = element_text(size = fontSizeInt, face = "bold"),
+              legend.text = element_text(size = fontSizeInt, face = "bold"), # change the legend text
+              strip.text = element_text(size = fontSizeInt, face = "bold"), # increase facet text size
                   # adjust x-axis text so at 45 degree angle
               #vvvvvvvvvvv-remove the background color-vvvvvvvvvvvvvvvvvvvvvvvvv
               panel.background = element_rect(color="WHITE", fill="WHITE"),
@@ -53,10 +56,8 @@ applyTheme = function(graph)
               #^^^^^^^^^^^-remove the background color-^^^^^^^^^^^^^^^^^^^^^^^^^
               axis.ticks = element_blank(), # remove the axis tick marks
               axis.line = element_line(color = "BLACK"), # axis line to black
-              legend.background = element_rect(fill=NA), 
+              legend.background = element_rect(fill=NA)); 
                    # remove the legend background
-              legend.title = element_text(size = 18, face = "bold"),
-              legend.text = element_text(size = 18, face = "bold")); # change the legend text
 #              legend.text = element_blank());
     return(graph);
 } # applyTheme function
@@ -476,7 +477,7 @@ pointGraph = function(data, yColStr, xColStr, gridColStr = NA, yLabStr = "",
 
     if(scaleBool > 0){graph = graph + expand_limits(y = 0);}
 
-    graph = applyTheme(graph); # apply my theme to the graph
+    graph = applyTheme(graph, 18); # apply my theme to the graph
 
     if(italicsBool == 1)
     {graph = graph + theme(legend.text = element_text(face = "italic"));}
@@ -655,6 +656,6 @@ plotMedian = function(graph,
 ################################################################################
 saveGraph = function(nameStr)
 { # saveGraph function
-    ggsave(paste(nameStr, ".tiff", sep = ""), device = "tiff", dpi = 300);
+    ggsave(paste(nameStr, ".svg", sep = ""), device = "svg", dpi = 300);
 } # saveGraph function
 

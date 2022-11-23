@@ -3,20 +3,23 @@ args = commandArgs(); # get command line input
 library("tidyr") # for replace_na
 library("ggplot2") # for ggplot
 library("stringr") # for str_to_title (so can capitalize assembler names)
-source(paste(dirname(gsub("--file=", "", args[4])),"graphFunctions.r",sep="/"));
+#source(paste(dirname(gsub("--file=", "", args[4])),"graphFunctions.r",sep="/"));
+source("graphFunctions.r")
     # dirname grabs the directory and args[4] is the path to this script
 
 qData = NA;
 subData = NA; # for subsampling qData
 
 # Read in the csv file provided by the user
-if(length(args) < 6)
-{ # if user input some
-    stop("A file to get data from must be provided");
-} else if(length(args) > 6)
-{ stop("Multiple files input, but this script only uses one file");}
+#if(length(args) < 6)
+#{ # if user input some
+#    stop("A file to get data from must be provided");
+#} else if(length(args) > 6)
+#{ stop("Multiple files input, but this script only uses one file");}
+#
+#qData = read.csv(args[6], header = TRUE);
 
-qData = read.csv(args[6], header = TRUE);
+qData = read.csv("voltrax-all--time-log.csv", header = TRUE);
 
 # replace NA's for polishers with none (so ggplot graphs)
 qData$Polisher = replace_na(qData$Polisher, "none");

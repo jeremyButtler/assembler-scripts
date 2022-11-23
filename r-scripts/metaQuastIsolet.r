@@ -1,9 +1,10 @@
 args = commandArgs(); # get command line input
 library("tidyr") # for replace_na
 library("ggplot2") # for ggplot
-library("data.table"); # for applying functions to data frames by groups
+library("data.table") # for applying functions to data frames by groups
 library("stringr") # convert first letter of assembler name to upper case
-source(paste(dirname(gsub("--file=", "", args[4])),"graphFunctions.r",sep="/"));
+source("graphFunctions.r") # functions used in this script
+#source(paste(dirname(gsub("--file=", "", args[4])),"graphFunctions.r",sep="/"));
     # dirname grabs the directory and args[4] is the path to this script
 
 # Variables (data frames)
@@ -28,13 +29,18 @@ yLabStr = c("Number of contigs",
 
 
 # Read in the csv file provided by the user
-if(length(args) < 6)
-{ # if user input some
-    stop("A file to get data from must be provided");
-} else if(length(args) > 6)
-{ stop("Multiple files input, but this script only uses one file");}
+#if(length(args) < 6)
+#{ # if user input some
+#    stop("A file to get data from must be provided");
+#} else if(length(args) > 6)
+#{ stop("Multiple files input, but this script only uses one file");}
 
-qData = read.csv(args[6], header = TRUE);
+#qData = read.csv(args[6], header = TRUE);
+qData =
+    read.csv(
+        "voltrax--metaStats-isolet-plasBal-geneId.csv",
+        header = TRUE
+); # Read in data from csv file
 
 #*******************************************************************************
 # Set up data for graphing
@@ -101,45 +107,60 @@ metaRefLenInt = sum(subData[!duplicated(subData$Organism),]$Reference.length);
     # duplicated is grabbing all rows that are duplicates
     # !dulicated is reversing it so only non duplicated rows are grabbed
 
-# Get the meta genome fraction
-conData$metaGenFracDbl = (conData$sumCol / metaRefLenInt) * 100 # aligned bases / meta ref length
+# Get the meta genome fraction (aligned bases / meta ref length)
+conData$metaGenFracDbl = (conData$sumCol / metaRefLenInt) * 100;
 
-graph = ggplot(conData,
-               aes(y = metaGenFracDbl,
-                   x = Coverage,
-                   fill = as.character(cut(as.numeric(Coverage),
-                                            breaks = c(0, 10, 20, 30, 50, 100, 200),
-                                            labels = c(10, 20, 30, 50, 100, 200)
-                                       )), # convert read depth to character
-                   shape = as.character(cut(as.numeric(Coverage),
-                                            breaks = c(0, 10, 20, 30, 50, 100, 200),
-                                            labels = c(10, 30, 20, 50, 100, 200)
-                                       )) # convert read depth to character
-                  ) # aes block
-); # graph the data
+metaGenFracGraph =
+    ggplot(
+        conData,
+        aes(
+            y = metaGenFracDbl,
+            x = Coverage,
+            fill =
+                as.character(cut(
+                    as.numeric(Coverage),
+                    breaks = c(0, 10, 20, 30, 50, 100, 200),
+                    labels = c(10, 20, 30, 50, 100, 200)
+            )), # Fill: convert read depth to character
+            shape = 
+                as.character(cut(
+                    as.numeric(Coverage),
+                    breaks = c(0, 10, 20, 30, 50, 100, 200),
+                    labels = c(10, 30, 20, 50, 100, 200)
+            )) # shape convert read depth to character
+        ) # aes block
+); # metaGenFracGraph the data
 
-graph = graph + 
-        facet_grid(cols = vars(!!as.symbol("Assembler"))) +
-        ylab("Meta-genome fraction") +
-        xlab("Read depth") +
-        geom_point(alpha = 0.5,
-                   cex = 4,
-                   position = position_jitter(width = 0.3,
-                                              height = 0
-        )) + 
-        scale_shape_manual(values = c(24, 21, 23, 25, 22, 21)) +
-        scale_fill_brewer(type = "qual", palette = "Set2");
+metaGenFracGraph =
+    metaGenFracGraph + 
+    facet_grid(cols = vars(!!as.symbol("Assembler"))) +
+    ylab("Metagenome fraction") +
+    xlab("Read depth") +
+    geom_point(
+        alpha = 0.5,
+        cex = 4,
+        position = position_jitter(width = 0.3, height = 0)
+    ) +  # geom_point
+    coord_cartesian(ylim = c(0, NA)) + # set lower y lim to 0
+    scale_shape_manual(values = c(24, 21, 23, 25, 22, 21)) +
+    scale_fill_brewer(type = "qual", palette = "Set2");
 
-graph = plotMedian(graph,
-                   data = conData,
-                   yColStr = "metaGenFracDbl",
-                   catAryStr = c("Assembler", "Coverage"),
-                   widthDbl = 20
-); # add median to graph, 20=crossbar width
+metaGenFracGraph =
+    plotMedian(
+        metaGenFracGraph,
+        data = conData,
+        yColStr = "metaGenFracDbl",
+        catAryStr = c("Assembler", "Coverage"),
+        widthDbl = 20
+); # add median to metaGenFracGraph, 20=crossbar width
 
-graph = applyTheme(graph);
-graph = graph + theme(legend.position = "none");
-saveGraph("Chromosome-meta-genFrac");
+metaGenFracGraph = applyTheme(metaGenFracGraph);
+metaGenFracGraph =
+    metaGenFracGraph +
+    theme(legend.position = "none") + # remove legend
+    theme(axis.title.x = element_text(margin = margin(t = 40)));
+    # offset x-axis title for merging with genome fraction graph
+#saveGraph("Chromosome-meta-genFrac");
 
 #*******************************************************************************
 # Chromosome 200x genome fraction graph
@@ -153,42 +174,68 @@ subData = subData[subData$Polished == "Yes",]; #& # only keep certian memebers
 print("makeing 200x genome fraction graph");
 
 #tmpData = subData[subData$Coverage == depthAryInt[intDepth],];
-graph = ggplot(subData[subData$Coverage == 200 &
-                       !is.na(subData$Assembler),
-                      ],
-               aes(y = Genome.fraction....,
-                   x = Organism,
-                   fill = Organism,
-                   shape = Organism,
-                  ) # aes values for graph
-); # graph the data
+genFracGraph =
+    ggplot(
+        subData[
+            subData$Coverage == 200 & # only keep 200x coverage tests
+            !is.na(subData$Assembler) # remove entries with no assembler
+            ,
+        ],
+        aes(
+            y = Genome.fraction....,
+            x = Organism,
+            fill = Organism,
+            shape = Organism,
+        ) # aes values for genFracGraph
+); # genFracGraph the data
 
-graph = plotMedian(graph,
-                   data = subData[subData$Coverage == 200 &
-                                  !is.na(subData$Assembler),],
-                   yColStr = "Genome.fraction....",
-                   catAryStr = c("Assembler", "Organism"),
-                   widthDbl = 1
-); # add median to graph, 1=crossbar width
+genFracGraph =
+    genFracGraph +
+    facet_grid(cols = vars(!!as.symbol("Assembler"))) +
+    ylab("Genome fraction") +
+    xlab("Community member") +
+    geom_point(
+        alpha = 0.5,
+        cex = 4,
+        position = position_jitter(width = 0.3, height = 0,)
+    ) + # geom_point add points with x-axis jitter
+    coord_cartesian(ylim = c (0, NA)) + # set ylim from 0 to max ylim
+    scale_shape_manual(values = c(23, 25, 21, 24, 22, 21, 24)) +
+    scale_fill_brewer(type = "qual", palette = "Set2");
 
-graph = graph +
-        facet_grid(cols = vars(!!as.symbol("Assembler"))) +
-        ylab("Genome fraction") +
-        xlab("Community member") +
-        geom_point(alpha = 0.5,
-                   cex = 4,
-                   position = position_jitter(width = 0.3,
-                                              height = 0,
-        )) +
-        coord_cartesian(ylim = c (0, NA)) + # set ylim from 0 to max ylim
-        scale_shape_manual(values = c(23, 25, 21, 24, 22, 21, 24)) +
-        scale_fill_brewer(type = "qual", palette = "Set2");
+genFracGraph =
+    plotMedian(
+        genFracGraph,
+        data =
+            subData[
+                subData$Coverage == 200 &
+                !is.na(subData$Assembler)
+                ,
+        ], # data: Filter data
+        yColStr = "Genome.fraction....",
+        catAryStr = c("Assembler", "Organism"),
+        widthDbl = 1
+); # add median to genFracGraph, 1=crossbar width
 
-graph = applyTheme(graph); # apply my theme to the graph
-graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
-graph = graph + theme(legend.position = "none") # remove legend
+genFracGraph = applyTheme(genFracGraph); # apply my theme to graph
+genFracGraph =
+    genFracGraph +
+    theme(axis.text.x = element_text(face = "bold.italic")) + # italize
+    theme(legend.position = "none") + # remove legend
+    theme(axis.title.x = element_text(margin = margin(t = 40)));
 
-saveGraph("Chromosome--200x--Genome-fraction");
+mergeFracGraph = 
+    cowplot::plot_grid(
+        metaGenFracGraph,
+        genFracGraph,
+        align = "h",     # Put graphs next to each other
+        axis = "l",      # Align by left margin
+        labels = "auto", # add a, b labels to plots
+        label_size = 10, # size of axis labels
+        scale = c(0.95, 0.95)  # Scale both graphs equally
+); # merge graphs
+
+saveGraph("Chromosone--genome-fractions");
 
 #*******************************************************************************
 # Chromosome 200x misassembly graph
@@ -234,7 +281,6 @@ graph = graph + theme(legend.position = "none") # remove legend
 
 saveGraph("Chromosome--200x--misassembly");
 
-
 #*******************************************************************************
 # Plasmid graph for meta-genome fraction
 #*******************************************************************************
@@ -263,8 +309,8 @@ metaRefLenInt = sum(subData[!duplicated(subData$Source) &
 conData$metaGenFracDbl = (conData$metaGenFracDbl / metaRefLenInt) * 100;
 conData = conData[!(is.na(conData$Assembler)),]; # remove empty rows
 
-print("plasmid meta-genome fraction Median replicate at all depths graph");
-graph = ggplot(conData,
+print("plasmid meta-genome fraction Median replicate at all depths metaGenFracGraph");
+metaGenFracGraph = ggplot(conData,
                aes(y = metaGenFracDbl,
                    x = Coverage,
                    fill = as.character(cut(as.numeric(Coverage),
@@ -275,11 +321,11 @@ graph = ggplot(conData,
                                             breaks = c(0, 10, 20, 30, 50, 100, 200),
                                             labels = c(10, 30, 20, 50, 100, 200)
                                        )) # convert read depth to character
-)); # graph the data
+)); # metaGenFracGraph the data
 
-graph = graph + 
+metaGenFracGraph = metaGenFracGraph + 
         facet_grid(cols = vars(!!as.symbol("Assembler"))) +
-        ylab("Meta-genome fraction") +
+        ylab("Metagenome fraction") +
         xlab("Read depth") +
         geom_point(alpha = 0.5,
                    cex = 4,
@@ -289,33 +335,36 @@ graph = graph +
         scale_shape_manual(values = c(24, 21, 23, 25, 22, 21)) +
         scale_fill_brewer(type = "qual", palette = "Set2");
 
-graph = plotMedian(graph,
+metaGenFracGraph = plotMedian(metaGenFracGraph,
                    data = conData,
                    yColStr = "metaGenFracDbl",
                    catAryStr = c("Assembler", "Coverage"),
                    widthDbl = 20
-); # add median to graph, 20=crossbar width
+); # add median to metaGenFracGraph, 20=crossbar width
 
-graph = applyTheme(graph);
-graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
-graph = graph + theme(legend.position = "none");
+metaGenFracGraph = applyTheme(metaGenFracGraph);
+metaGenFracGraph =
+    metaGenFracGraph +
+    theme(axis.text.x = element_text(face = "bold.italic")) +  # italize
+    theme(axis.title.x = element_text(margin = margin(t = 40))) +
+    theme(legend.position = "none");
 saveGraph("Plasmid-metaGenFrac");
 
 #*******************************************************************************
 # Plasmid graph for the 200x genome fraction
 #*******************************************************************************
 
-print("Making graph for genome fraction at 200x read depth");
-graph = ggplot(subData[subData$Coverage == 200 &
+print("Making genFracGraph for genome fraction at 200x read depth");
+genFracGraph = ggplot(subData[subData$Coverage == 200 &
                        ! is.na(subData$Assembler),
                       ],
                aes(y = Genome.fraction....,
                    x = Source,
                    fill = Source,
                    shape = Source,
-)); # graph the data
+)); # genFracGraph the data
 
-graph = graph +
+genFracGraph = genFracGraph +
         facet_grid(cols = vars(!!as.symbol("Assembler"))) +
         ylab("Genome fraction") +
         xlab("Community member") +
@@ -328,18 +377,33 @@ graph = graph +
         scale_shape_manual(values = c(24, 21, 23, 25, 22, 21)) +
         scale_fill_brewer(type = "qual", palette = "Set2");
 
-graph = plotMedian(graph,
+genFracGraph = plotMedian(genFracGraph,
                    data = subData[subData$Coverage == 200 &
                                   ! is.na(subData$Assembler),],
                    yColStr = "Genome.fraction....",
                    catAryStr = c("Assembler", "Source"),
                    widthDbl = 1
-); # add median to graph, 1=crossbar width
+); # add median to genFracGraph, 1=crossbar width
 
-graph = applyTheme(graph); # apply my theme
-graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
-graph = graph + theme(legend.position = "none"); # remove the legened (not needed)
-saveGraph("Plasmid--200x--genome-fraction");
+genFracGraph = applyTheme(genFracGraph); # apply my theme
+genFracGraph =
+    genFracGraph + 
+    theme(axis.text.x = element_text(face = "bold.italic")) + # italize
+    theme(axis.title.x = element_text(margin = margin(t = 40))) +
+    theme(legend.position = "none"); # remove the legened (not needed)
+
+mergeFracGraph = 
+    cowplot::plot_grid(
+        metaGenFracGraph,
+        genFracGraph,
+        align = "h",     # Put graphs next to each other
+        axis = "l",      # Align by left margin
+        labels = "auto", # add a, b labels to plots
+        label_size = 10, # size of axis labels
+        scale = c(1, 1)  # Scale both graphs equally
+); # merge graphs
+
+saveGraph("Plasmid--genome-fraction");
 
 #*******************************************************************************
 # Plasmid graph for 50x genome fraction
@@ -376,7 +440,7 @@ graph = plotMedian(graph,
                    widthDbl = 1
 ); # add median to graph, 1=crossbar width
 
-graph = applyTheme(graph); # apply my theme
+graph = applyTheme(graph, fontSizeInt = 18); # apply my theme
 graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
 graph = graph + theme(legend.position = "none"); # remove the legened (not needed)
 saveGraph("Plasmid--50x--genome-fraction");
@@ -417,7 +481,7 @@ graph = plotMedian(graph,
 ); # add median to graph, 1=crossbar width
 
 
-graph = applyTheme(graph); # apply my theme
+graph = applyTheme(graph, fontSizeInt = 18); # apply my theme
 graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
 graph = graph + theme(legend.position = "none"); # remove the legened (not needed)
 saveGraph("Plasmid--30x--genome-fraction");
@@ -458,7 +522,7 @@ graph = plotMedian(graph,
 ); # add median to graph, 1=crossbar width
 
 
-graph = applyTheme(graph); # apply my theme
+graph = applyTheme(graph, fontSizeInt = 18); # apply my theme
 graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
 graph = graph + theme(legend.position = "none"); # remove the legened (not needed)
 saveGraph("Plasmid--20x--genome-fraction");
@@ -499,7 +563,7 @@ graph = plotMedian(graph,
 ); # add median to graph, 1=crossbar width
 
 
-graph = applyTheme(graph); # apply my theme
+graph = applyTheme(graph, fontSizeInt = 18); # apply my theme
 graph = graph + theme(axis.text.x = element_text(face = "bold.italic")); # italize
 graph = graph + theme(legend.position = "none"); # remove the legened (not needed)
 saveGraph("Plasmid--200x--misAssemblies");
