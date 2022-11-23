@@ -38,7 +38,7 @@ yLabStr = c("Number of contigs",
 #qData = read.csv(args[6], header = TRUE);
 qData =
     read.csv(
-        "voltrax--metaStats-isolet-plasBal-geneId.csv",
+        "../r-data/voltrax--metaStats-isolet-plasBal-geneId.csv",
         header = TRUE
 ); # Read in data from csv file
 
